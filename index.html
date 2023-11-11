@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+   <title>My Basic Form</title>
+</head>
+<body>
+   <h1 style="text-align:center;">Newsletter Sign-Up</h1>
+   <form name="MyForm"  method="Post" action="thankyou.html">
+     <div style="text-align:center;">
+     <input type="text" name="fullname" placeholder="Your name" maxlength="20">
+     <input type="email" name="email"  placeholder="Your email" maxlength="30">
+     <input type="text" name="phone" placeholder="Your phone number*" maxlength="10" required />
+     <input type="submit" name="submit"  value="Submit" onClick="javascript:return validateInputs();">
+    </div>
+   </form>
+<script>
+function validateInputs()
+  {
+    //declaration of variables
+    var SubmitForm;
+    var FormErrors;
+
+    //Initially set SubmitForm to true. 
+    SubmitForm = true;
+
+    //Retrieve variables to be validated and sanitized
+    //Assume they are dangerous for now
+    var fullname    = new String(document.MyForm.fullname.value);
+    var email   = new String(document.MyForm.email.value);
+    var phone = new String(document.MyForm.phone.value);
+
+    //Check that the user inputs are not blank
+    //JavaScript logical operator for OR : ||
+    if ( fullname.length<1 || email.length<1 || phone.length<1 )
+    {
+    FormErrors = "All fields are mandatory. Please complete the form.";
+    SubmitForm = false;
+    } else {
+//Set up a filter for the pattern of an email
+//Learn more about referencing characters:          //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Character_Classes
+
+var filter = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+
+//Filter for phone number
+var filter2 = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
+
+    //Use test() method to check user email against the filter
+    //test() method: https://www.w3schools.com/jsref/jsref_regexp_test.asp     
+    if (!filter.test(email))
+    {
+        FormErrors = "Invalid email. Please enter a valid email.";
+        SubmitForm = false;
+     } 
+
+     if (!filter2.test(phone)) 
+     {
+      FormErrors = "Invalid phone number. Please enter ten(10) digits.";
+      SubmitForm = false;
+     }
+    }
+    
+    if (SubmitForm == false)
+    {
+        //The form cannot be submitted.
+        alert(FormErrors);
+        return false;
+    } else {
+        //SANITIZE user inputs by allowing only [a-z 0-9 _ - . @] 
+        //strip forbidden characters
+        fullname = fullname.replace(/[^a-z0-9\s\-]/gim,"");
+        fullname = fullname.trim();
+        email = email.replace(/[^a-z0-9_@.-]/gim,"");
+        email = email.trim();
+        phone = phone.replace(/[^0-9]/gim,"");
+        phone = phone.trim();
+
+        //ready to submit
+        document.MyForm.submit();
+    }
+}
+</script>
+</body>
+</html>
